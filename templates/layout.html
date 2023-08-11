@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang=en>
+    <head>
+        {% block head %}
+        <meta charset=utf-8>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{% endblock %} - Beauty Book</title>
+        <link href="{{ url_for("static", filename="style.css") }}" rel="stylesheet" type="text/css" />
+        {% endblock %}
+    </head>
+
+    <body>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer">
+            {% block footer %}&copy; Copyright 2023. Created by bucaar.{% endblock %}
+        </div>
+        <script type="module" src="{{ url_for("static", filename="beautybook.js") }}"></script>
+    </body>
+</html>
