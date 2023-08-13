@@ -20,6 +20,10 @@ def index():
 def login():
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    return render_template("logout.html")
+
 @app.route("/create_user")
 def create_user():
     user_ref: auth.UserRecord
@@ -29,7 +33,7 @@ def create_user():
 @app.route("/create_doc")
 def create_doc():
     doc_ref: firestore.DocumentReference
-    doc_time, doc_ref = db.collection("users").add({"first": "Ada", "last": "Lovelace", "born": 1815})
+    doc_time, doc_ref = db.collection("users").add({"first": "Aaron", "last": "Buchholz"})
     return "Doc created: %s" % doc_ref.id
 
 @app.route("/check_user")
