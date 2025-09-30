@@ -1,51 +1,58 @@
 import os
-from google.cloud import firestore
-from firebase_admin import auth, initialize_app
-from flask import Flask, render_template, request
-
-if __name__ == "__main__":
-    if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
-        path = os.path.dirname(__file__)
-        os.environ.setdefault("GOOGLE_APPLICATION_CREDENTIALS", path + "/secret/beauty-book-service-cred.json")
+from flask import Flask, render_template
 
 app = Flask(__name__)
-db = firestore.Client()
-default_app = initialize_app()
+# db = firestore.Client()
+# default_app = initialize_app()
+
+# def require_user(redirect_path: str = None):
+#     # Return a new function that wraps the function
+#     def wrapper(func):
+#         # Return the decorated functionality
+#         @wraps(func)
+#         def decorated(*args, **kwargs):
+#             # Check for our user
+#             user = get_user()
+#             if not user:
+#                 if redirect_path:
+#                     return redirect(url_for(redirect_path))
+                
+#                 return "Not authorized", 401
+
+#             # Call the wrapped function to get the response
+#             # Inject the user auth object
+#             resp = func(*args, **kwargs, user=user)
+#             return resp
+
+#         return decorated
+#     return wrapper
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/login")
-def login():
-    return render_template("login.html")
+# @app.route("/login")
+# def login():
+#     return render_template("login.html")
 
-@app.route("/logout")
-def logout():
-    return render_template("logout.html")
+# @app.route("/dashboard")
+# @require_user("login")
+# def dashboard(user: UserAuth):
+#     # user = get_user()
+#     username = user.email
+#     return render_template("dashboard.html", username=username)
 
-@app.route("/create_user")
-def create_user():
-    user_ref: auth.UserRecord
-    user_ref = auth.create_user()
-    return "User created: %s" % user_ref.uid
+# @app.route("/api/create_location/<name>")
+# @require_user()
+# def api_create_location(name, user: UserAuth):
+#     location = add_location(db, name)
+#     return "%s" % location
 
-@app.route("/create_doc")
-def create_doc():
-    doc_ref: firestore.DocumentReference
-    doc_time, doc_ref = db.collection("users").add({"first": "Aaron", "last": "Buchholz"})
-    return "Doc created: %s" % doc_ref.id
-
-@app.route("/check_user")
-def check_user():
-    auth_token = request.cookies.get("auth_token")
-    if not auth_token:
-        return "Not authorized", 401
-    
-    auth_results = auth.verify_id_token(auth_token)
-    print(auth_results)
-
-    return "Hello, %s" % auth_results["email"]
+# @app.route("/api/get_location/<doc_id>")
+# @require_user()
+# def api_get_location(doc_id, user: UserAuth):
+#     location = get_location(db, doc_id)
+#     return "%s" % location
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    app.run(host="192.168.99.108", port=int(os.environ.get("PORT", 5522)))

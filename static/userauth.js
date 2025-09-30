@@ -16,17 +16,14 @@ import {
 
 export const loginUser = async (username, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, username, password);
-    console.log("Logged in as", userCredential);
 };
 
 export const signOutUser = async () => {
     await signOut(auth);
-    console.log("Signed out");
 };
 
 export const createUser = async (username, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, username, password);
-    console.log("Created user", userCredential);
 };
 
 const setUserCookie = async (user) => {
@@ -38,22 +35,61 @@ const clearUserCookie = () => {
     document.cookie = "auth_token=";
 }
 
-export const attachOnAuth = async () => {
+export const attachOnAuth = async (callbackFunc) => {
     return onAuthStateChanged(auth,
         (user) => {
-            console.log("On Auth", user);
 
             if (user) {
-                console.log(`Signed in as ${user.email} (${user.displayName})`);
                 setUserCookie(user);
+
+                if (callbackFunc) {
+                    callbackFunc(user);
+                }
             }
             else {
                 clearUserCookie();
+
+                if (callbackFunc) {
+                    callbackFunc(user);
+                }
             }
         },
         (error) => {
-            console.error("An error occurred within On Auth", error);
+            console.error("On Auth Error", error);
             clearUserCookie();
+
+            if (callbackFunc) {
+                callbackFunc(null, error);
+            }
         }
     );
 };
+
+export const translateFirebaseError = (error) => {
+    if (error.name !== "FirebaseError") {
+        console.error("Unknown error", error);
+        return "An unknown error has occurred";
+    }
+
+    switch (error.code) {
+        case "auth/invalid-email":
+            return "Please enter a valid email address";
+        case "auth/missing-password":
+            return "Please enter a password";
+        case "auth/user-disabled":
+            return "This account has been disabled";
+        case "auth/too-many-requests":
+            return "This account has been locked. Please reset your password or try again later";
+        case "auth/user-not-found":
+            return "An account with this email could not be found";
+        case "auth/wrong-password":
+            return "Invalid email and password combination";
+        case "auth/email-already-in-use":
+            return "There is already an account with the provided email";
+        case "auth/weak-password":
+            return "Please use a stronger password";
+        default:
+            console.error("Unhandled error", error);
+            return "An unhandled error has occurred";
+    }
+}

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h1>Dashboard</h1>
+    <div><span id="dashboard-error-message"></span></div>
+    <div><span>Hello, {{ username }}</span></div>
+    <div>
+        <button type="button" id="button_signout">Log out</button>
+    </div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="module" src="{{ url_for("static", filename="dashboard.js") }}"></script>
+{% endblock %}
